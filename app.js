@@ -6,7 +6,9 @@ const ejs = require("ejs");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://127.0.0.1:27017/blogwebsite");
+// mongoose.connect("mongodb://127.0.0.1:27017/blogwebsite");
+mongoose.connect("mongodb+srv://abhijithdameruppala:abhimani12@cluster0.wthch8f.mongodb.net/blogwebsite");
+
 
 const PostSchema = mongoose.Schema({
   title: String,
@@ -54,7 +56,7 @@ app.post("/compose", function(req, res){
 app.get("/", function(req, res){
   Post.find({})
     .then(function(allPosts){
-      console.log(allPosts);
+      // console.log(allPosts);
       res.render( "home",{startContent: homeStartingContent, posts: allPosts});
 
     })
@@ -65,26 +67,22 @@ app.get("/", function(req, res){
 });
 
 app.get("/posts/:topic", function(req, res){
-  Post.find({})
-    .then(function(posts){
-      posts.forEach(function(e){
-        if(_.lowerCase(e.title) === _.lowerCase(req.params.topic)){
-          console.log("Match found!");
-          res.render( "post", {title: e.title, body: e.body});
-        }
-        else{
-          console.log("Match NOT found");
-          res.send("There is no such post in the database");
-
-        } 
-    })
+  Post.find({ title : req.params.topic.slice(1) })
+    .then(function(output){
+      if(output[0] == undefined){
+        console.log("Post Not Found");
+        res.send("There is no such file in the database");
+      }
+      else{
+        console.log(output[0], req.params.topic);
+        console.log("Post Found");
+        res.render( "post", {title: output[0].title, body: output[0].body});
+  }
+})
+    .catch(function(err){
+      console.log(err);
+    });
   })
-  .catch(function(err){
-    console.log(err);
-  });
-  
-});
-  // console.log(req.params.topic);
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");

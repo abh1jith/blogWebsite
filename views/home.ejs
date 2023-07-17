@@ -4,9 +4,12 @@
 <p><%= startContent %></p>
 
 <% posts.forEach(function(e){ %>
-<h1>
+<a href="/posts/:<%= e.title %>" style="text-decoration: none;">
+    <h1>
     <%= e.title %>
-</h1>
+    </h1>
+</a>
+
 <p>
     <%= e.body.substring(0, 400) + " ..." %> <a href="/posts/:<%= e.title %>"  >Read More</a>
 </p>
